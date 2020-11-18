@@ -5,6 +5,9 @@ from bs4 import BeautifulSoup as soup
 from datetime import datetime
 import os
 import sys
+import time
+from gtts import gTTS
+import subprocess
 
 # =====================================================================================
 my_url = 'https://www.olx.ba/graficke-kartice/5/154'
@@ -19,13 +22,14 @@ uClient.close()
 page_soup = soup(page_html, "html.parser")
 # grabs each product
 containers = page_soup.findAll("div", {"class": "rezultatipretrage"})
-
-
+#filename
 filename = "Graficke_Kartice.html"
-
+filename2 = "Graficke_Kartice.txt"
+brojStranica = 25
 with open(filename,'w',encoding="utf-8") as out:
+  with open(filename2,'w',encoding="utf-8") as outTxt:
 
-    for i in range(25):
+    for i in range(brojStranica):
 
         # Naslov ajtema
         title_container = page_soup.findAll("p", {"class": "na"})
@@ -39,6 +43,11 @@ with open(filename,'w',encoding="utf-8") as out:
         # stanje ajtema
         condition_container = page_soup.findAll("span", {"class": "nko"})
         product_condition = condition_container[i].text
+        # current date and time
+        sttime = datetime.now().strftime('%Y.%m.%d/%H:%M:%S')
+        t0 = time.time()
+
+        print("Time released " + sttime)
 
         print("Ime proizvoda: " + product_name)
 
@@ -47,14 +56,31 @@ with open(filename,'w',encoding="utf-8") as out:
         print("Deskripcija: " + product_description)
 
         print("Stanje Proizvoda: " + product_condition)
-        print("--------------------------")
-
-        # current date and time
-         
-        sttime = datetime.now().strftime('%Y.%m.%d.%H:%M:%S')
         
+         
+        t1 = time.time()
+        
+        timef = t1-t0
+        
+        print("Completed in: ",timef)       
+        print("--------------------------")
         
         out.write('<body style="background-color:black;"><h2 style="color:green;">'+ "SERVER-TIME: " + sttime +"</h2>"+'\n')
         out.write('<p style="color:green;">Ime proizvoda: ' + product_name +"\n"+ 'Cijena proizvoda: ' + product_price +"\n"+ 'Deskripcija: ' + product_description +"\n"+ 'Stanje Proizvoda: ' + product_condition + "</p></body>" + "\n")
+        outTxt.write('Ime proizvoda: ' + product_name +"\n"+ 'Cijena proizvoda: ' + product_price +"\n"+ 'Deskripcija: ' + product_description +"\n"+ 'Stanje Proizvoda: ' + product_condition + "\n")
 
     out.close()
+    outTxt.close()
+t3 = time.time()
+print("Obradjivanje teksta sacekaj bo... ")
+Fajl = open('Graficke_Kartice.txt','r',encoding="utf-8")
+tekst = Fajl.read()
+izlaz = gTTS(text=tekst, lang='sr', slow=False)
+izlaz.save("tts.mp3")
+Fajl.close()
+t4 = time.time()
+ttsTimeFinish = t4-t3
+print("TTS Obradjen za: ",ttsTimeFinish)
+input("Press Enter to continue...")
+import ttsOtv
+
