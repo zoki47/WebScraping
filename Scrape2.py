@@ -23,7 +23,7 @@ page_soup = soup(page_html, "html.parser")
 # grabs each product
 containers = page_soup.findAll("div", {"class": "rezultatipretrage"})
 #filename
-filename = "Graficke_Kartice.html"
+filename = "index.html"
 filename2 = "Graficke_Kartice.txt"
 brojStranica = 25
 with open(filename,'w',encoding="utf-8") as out:
